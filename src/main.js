@@ -1,4 +1,5 @@
-import { pokemonData, filterByLetter } from "./data.js";
+import { pokemonData, sortPokemon, calculateSpawnMinMax} from "./data.js";
+import pokemon from "./data/pokemon/pokemon.js";
 // import data from './data/lol/lol.js';
 import data from "./data/pokemon/pokemon.js";
 // import data from './data/rickandmorty/rickandmorty.js';
@@ -7,14 +8,15 @@ import data from "./data/pokemon/pokemon.js";
 //secciones
 const homeSecction = document.getElementById("homeSecction");
 const pokedexSecction = document.getElementById("pokedexSecction");
-const mapSecction = document.getElementById("mapSecction");
 const extraSecction = document.getElementById("extraSecction");
 const pokemonDiv = document.getElementById("pokemons");
 //botones de barra menu
 const btnHome = document.getElementById("buttonHome");
 const btnPokedex = document.getElementById("buttonPokedex");
-const btnMap = document.getElementById("buttonMap");
-const btnExtra = document.getElementById("buttonExtra");
+const btnExtra = document.getElementById("buttonExtra")
+const btnMax = document.getElementById("btnMax");
+const btnMin = document.getElementById("btnMin");
+
 
 //botones de tipos
 const btnAllTypes = document.getElementById("allTypes");
@@ -37,52 +39,33 @@ const btnTypeDragon    = document.getElementById('typeDragon');
 const btnTypeDark     = document.getElementById('typeDark');
 const btnTypeFairy    = document.getElementById('typeFairy');
 
-//Filtro Asc y desc
-//const filterAsc = document.getElementById('asc');
-//const filterDes = document.getElementById('des');
-const filterLetter = document.getElementById('filterLetter').value;;
-
 //Ocultar secciones
 function mostrarSeccion(seccion) {
   switch (seccion) {
   case "home":
     homeSecction.style.display = "block";
     pokedexSecction.style.display = "none";
-    mapSecction.style.display = "none";
-    extraSecction.style.display = "none";
+    extraSecction.style.display = "none"
     break;
   case "pokedex":
     homeSecction.style.display = "none";
     pokedexSecction.style.display = "block";
-    mapSecction.style.display = "none";
-    extraSecction.style.display = "none";
+    extraSecction.style.display = "none"
     break;
-  case "map":
-    homeSecction.style.display = "none";
-    pokedexSecction.style.display = "none";
-    mapSecction.style.display = "block";
-    extraSecction.style.display = "none";
-    break;
-  case "extra":
-    homeSecction.style.display = "none";
-    pokedexSecction.style.display = "none";
-    mapSecction.style.display = "none";
-    extraSecction.style.display = "block";
-    break;
+    case "extra":
+      homeSecction.style.display = "none";
+      pokedexSecction.style.display = "none";
+      extraSecction.style.display = "block"
+      break;
   default:
     console.error("Sección no válida");
   }
 }
 
+
 btnHome.addEventListener("click", () => mostrarSeccion("home"));
 btnPokedex.addEventListener("click", () => mostrarSeccion("pokedex"));
-btnMap.addEventListener("click", () => mostrarSeccion("map"));
 btnExtra.addEventListener("click", () => mostrarSeccion("extra"));
-
-
-console.log(pokemonData);
-console.log(data);
-//const allType = data.pokemon;
 
 
 // Función para filtrar Pokémon por tipo
@@ -91,12 +74,12 @@ function filtrarPorTipo(tipo) {
 }
 
 // Función para mostrar los Pokémon en el contenedor
-function mostrarPokemon(pokemon) {
-  
-  pokemon.forEach(pokemon => {
+function mostrarPokemon(pokemones) {
+ 
+  pokemones.forEach(pokemon => {
     pokemonDiv.innerHTML += `<div class="pokemon-container">
       <img src="${pokemon.img}"><br>
-      <strong>N°: </strong>${pokemon.num}<br> 
+      <strong>#${pokemon.num}</strong><br> 
       <strong>${pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}</strong><br> 
       <strong>Type</strong>: ${pokemon.type}<br>
       <strong>Resistant</strong>: ${pokemon.resistant.join(", ")}<br>
@@ -105,7 +88,32 @@ function mostrarPokemon(pokemon) {
   });
 }
 
-// Mostrar todos los Pokémon
+//seccion ordenar por abecedario
+const orderSelect = document.getElementById("order-select");
+
+orderSelect.addEventListener("change", function() {
+  const selectedOption = orderSelect.value;
+
+  if (selectedOption === "asc") {
+    // Ordenar y mostrar en orden ascendente
+    pokemonDiv.innerHTML = "";
+    const pokemonOrdenados = sortPokemon(data.pokemon, "asc");
+    mostrarPokemon(pokemonOrdenados);
+  } else if (selectedOption === "desc") {
+    // Ordenar y mostrar en orden descendente
+    pokemonDiv.innerHTML = "";
+    const pokemonOrdenados = sortPokemon(data.pokemon, "desc");
+    mostrarPokemon(pokemonOrdenados);
+  }
+});
+
+// Mostrar todos los Pokémon en pokedex
+btnPokedex.addEventListener("click", function() {
+  pokemonDiv.innerHTML = "";
+  mostrarPokemon(data.pokemon);
+});
+
+//Mostrar todos en bóton pokebola 
 btnAllTypes.addEventListener("click", function() {
   pokemonDiv.innerHTML = "";
   mostrarPokemon(data.pokemon);
@@ -219,43 +227,46 @@ btnTypeFairy.addEventListener("click", function() {
   mostrarPokemon(filtrarPorTipo("fairy"));
 });
 
-//Filtrar por abecedario 
+//Spawn
+const mostrarPokeSpawn = document.getElementById("mostrarPokeSpawn")
+const spawnChanceMinMax = calculateSpawnMinMax(data);
 
-/*function sortData(data, name, sortOrder){
-if (sortOrder === 'asc') {
-  filterData.sort((a, b) => (a.name > b.name) ? 1 : -1);
-} else if (sortOrder === 'desc') {
-  filterData.sort((a, b) => (a.name < b.name) ? 1 : -1);
-  
+// obtén los valores mínimo y máximo de spawn_chance a través del objeto devuelto por la función
+const minSpawnChance = spawnChanceMinMax.min;
+const maxSpawnChance = spawnChanceMinMax.max;
+
+// imprime los valores mínimo y máximo de spawn_chance
+console.log("Mínimo: " + minSpawnChance + ", Máximo: " + maxSpawnChance);
+
+function mostrarSpawn(pokemones, spawn) {
+  const sortedPokemon = [...pokemones].sort((a, b) => spawn ? a['spawn-chance'] - b['spawn-chance'] : b['spawn-chance'] - a['spawn-chance']).slice(0, 10);
+  const containerClass = spawn ? "spawnMax-container" : "spawnMin-container";
+  sortedPokemon.forEach(pokemon => {
+    mostrarPokeSpawn.innerHTML += `<div class="${containerClass}">
+      <img src="${pokemon.img}"><br>
+      <strong>#${pokemon.num}</strong><br> 
+      <strong>${pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}</strong><br> 
+      <strong>Type</strong>: ${pokemon.type}<br>
+      <strong>spawn-chance</strong>: ${pokemon['spawn-chance']}<br>
+    </div>`;
+  });
 }
-console.log(sortData ())
-return filterData;
-}
+
+btnMin.addEventListener("click", function() {
+  mostrarPokeSpawn.innerHTML = "";
+  mostrarSpawn(data.pokemon, true); // muestra los 10 pokémons con la probabilidad de spawn más alta
+});
+
+btnMin.addEventListener("click", function() {
+  mostrarPokeSpawn.innerHTML = "";
+  mostrarSpawn(data.pokemon, false); // muestra los 10 pokémons con la probabilidad de spawn más baja
+});
+*/
 
 
-function sortData(data, name, sortOrder) {
-  if (sortOrder === 'asc') {
-    data.sort((a, b) => (a[name] > b[name]) ? 1 : -1);
-  } else if (sortOrder === 'desc') {
-    data.sort((a, b) => (a[name] < b[name]) ? 1 : -1);
-  }
-  console.log(data);
-  return data;
-}*/
-
-/*filterAsc.addEventListener("click", function() {
-  pokemonDiv.innerHTML = "";
-  mostrarPokemon(sortData());
-});*/
-
-/*function ordenarPokemon(pokemon, sortBy, sortOrder) {
-  // Se ordenan los pokemons por el campo especificado en 'sortBy' y en el orden especificado en 'sortOrder'
-  pokemon = sortData(pokemon, sortBy, sortOrder);
-
-  // Se devuelve el array de pokemons ordenado
-  return pokemon;
-  console.log(pokemon);
-} */
-
-
-
+/*btnExtra.addEventListener("click", function() {
+  mostrarPokeSpawn.innerHTML = "";
+  mostrarSpawn(data.pokemon, false); // muestra los 10 pokémons con la probabilidad de spawn más baja
+  mostrarSpawn(data.pokemon, true); // muestra los 10 pokémons con la probabilidad de spawn más alta
+});
+*/
