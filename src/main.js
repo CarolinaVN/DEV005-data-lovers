@@ -61,8 +61,6 @@ function mostrarSeccion(seccion) {
     console.error("Sección no válida");
   }
 }
-
-
 btnHome.addEventListener("click", () => mostrarSeccion("home"));
 btnPokedex.addEventListener("click", () => mostrarSeccion("pokedex"));
 btnExtra.addEventListener("click", () => mostrarSeccion("extra"));
@@ -261,7 +259,7 @@ btnMin.addEventListener("click", function() {
   mostrarPokeSpawn.innerHTML = "";
   mostrarSpawn(data.pokemon, false); // muestra los 10 pokémons con la probabilidad de spawn más baja
 });
-*/
+
 
 
 /*btnExtra.addEventListener("click", function() {
