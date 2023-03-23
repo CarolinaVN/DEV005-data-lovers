@@ -80,24 +80,6 @@ function mostrarPokemon(pokemones) {
   });
 }
 
-//seccion ordenar por abecedario
-const orderSelect = document.getElementById("order-select");
-
-orderSelect.addEventListener("change", function () {
-  const selectedOption = orderSelect.value;
-
-  if (selectedOption === "asc") {
-    // Ordenar y mostrar en orden ascendente
-    pokemonDiv.innerHTML = "";
-    const pokemonOrdenados = sortPokemon(data.pokemon, "asc");
-    mostrarPokemon(pokemonOrdenados);
-  } else if (selectedOption === "desc") {
-    // Ordenar y mostrar en orden descendente
-    pokemonDiv.innerHTML = "";
-    const pokemonOrdenados = sortPokemon(data.pokemon, "desc");
-    mostrarPokemon(pokemonOrdenados);
-  }
-});
 
 // Mostrar todos los Pokémon en pokedex
 btnPokedex.addEventListener("click", function () {
@@ -219,6 +201,24 @@ btnTypeFairy.addEventListener("click", function () {
   mostrarPokemon(filtrarPorTipo("fairy"));
 });
 
+//seccion ordenar por abecedario
+const orderSelect = document.getElementById("order-select");
+
+orderSelect.addEventListener("change", function () {
+  const selectedOption = orderSelect.value;
+
+  if (selectedOption === "asc") {
+    // Ordenar y mostrar en orden ascendente
+    pokemonDiv.innerHTML = "";
+    const pokemonOrdenados = sortPokemon(data.pokemon, "asc");
+    mostrarPokemon(pokemonOrdenados);
+  } else if (selectedOption === "desc") {
+    // Ordenar y mostrar en orden descendente
+    pokemonDiv.innerHTML = "";
+    const pokemonOrdenados = sortPokemon(data.pokemon, "desc");
+    mostrarPokemon(pokemonOrdenados);
+  }
+});
 
 // Mostrar pokemon por peso 
 
@@ -255,62 +255,4 @@ function mostrarAverage(pokemones) {
 btnExtra.addEventListener("click", function () {
   mostrarAverage(data);
 });
-
-//poke peso
-/*const mostrarPokeAverage = document.getElementById("mostrarPokePeso");
-
-function mostrarAverage(pokemones) {
-  const averagePokemon = computeStats(pokemones);
-  console.log(averagePokemon);
-
-  const lightestPokemon = averagePokemon.lightestPokemon;
-  const heaviestPokemon = averagePokemon.heaviestPokemon;
-  const closestPokemon = averagePokemon.closestPokemon;
-
-  const lightestHTML = `
-    <div>
-      <h3>Pokemon con peso más liviano</h3>
-      <div id = pokePeso>
-      <img src="${lightestPokemon.img}"><br>
-      <strong>#${lightestPokemon.num}</strong><br> 
-      <strong>${lightestPokemon.name.charAt(0).toUpperCase() + lightestPokemon.name.slice(1)}</strong><br> 
-      <strong>Type</strong>: ${lightestPokemon.type}<br>
-      <strong>Peso</strong>: ${lightestPokemon.size.weight}<br><br>
-      </div>
-    </div>
-  `;
-
-  const heaviestHTML = `
-    <div>
-      <h3>Pokemon con peso más pesado</h3>
-      <div id = pokePeso>
-      <img src="${heaviestPokemon.img}"><br>
-      <strong>#${heaviestPokemon.num}</strong><br> 
-      <strong>${heaviestPokemon.name.charAt(0).toUpperCase() + heaviestPokemon.name.slice(1)}</strong><br> 
-      <strong>Type</strong>: ${heaviestPokemon.type}<br>
-      <strong>Peso</strong>: ${heaviestPokemon.size.weight}<br><br>
-      </div>
-    </div>
-  `;
-
-  const closestHTML = `
-    <div>
-      <h3>Pokemon más cercano al peso promedio</h3>
-      <div id = pokePeso>
-      <img src="${closestPokemon.img}"><br>
-      <strong>#${closestPokemon.num}</strong><br> 
-      <strong>${closestPokemon.name.charAt(0).toUpperCase() + closestPokemon.name.slice(1)}</strong><br> 
-      <strong>Type</strong>: ${closestPokemon.type}<br>
-      <strong>Peso</strong>: ${closestPokemon.size.weight}<br><br>
-      </div>
-    </div>
-  `;
-
-  mostrarPokeAverage.innerHTML = lightestHTML + heaviestHTML + closestHTML;
-}
-
-btnExtra.addEventListener("click", function () {
-  mostrarAverage(data);
-});
-*/
 
